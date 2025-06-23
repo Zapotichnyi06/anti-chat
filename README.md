@@ -11,3 +11,5 @@
 # ⚠️ Disclaimer:
  
  *This chatbot is not a substitute for professional therapy. It’s a self-help tool designed to offer emotional support and reflection.*
+
+ ![Game Screenshot](./public/img.png)
