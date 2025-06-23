@@ -1,4 +1,9 @@
 import { neon } from "@neondatabase/serverless"
+import { NextResponse } from 'next/server';
+
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable is not set");
+}
 
 const sql = neon(process.env.DATABASE_URL!)
 
@@ -9,7 +14,7 @@ export async function GET(req: Request) {
     const conversationId = searchParams.get("conversationId")
 
     if (!userId) {
-      return Response.json({ error: "User ID is required" }, { status: 400 })
+      return NextResponse.json({ error: "User ID is required" }, { status: 400 })
     }
 
     // Ensure tables exist
@@ -57,10 +62,10 @@ export async function GET(req: Request) {
       `
 
       if (conversation.length === 0) {
-        return Response.json({ error: "Conversation not found" }, { status: 404 })
+        return NextResponse.json({ error: "Conversation not found" }, { status: 404 })
       }
 
-      return Response.json({ conversation: conversation[0] })
+      return NextResponse.json({ conversation: conversation[0] })
     }
 
     // Get all user conversations
@@ -75,10 +80,10 @@ export async function GET(req: Request) {
       LIMIT 50
     `
 
-    return Response.json({ conversations })
+    return NextResponse.json({ conversations })
   } catch (error) {
     console.error("Error fetching conversations:", error)
-    return Response.json({ conversations: [] })
+    return NextResponse.json({ conversations: [] })
   }
 }
 
@@ -87,7 +92,7 @@ export async function POST(req: Request) {
     const { userId, title, messages, summary } = await req.json()
 
     if (!userId || !messages || !Array.isArray(messages)) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     // Create conversation
@@ -109,10 +114,10 @@ export async function POST(req: Request) {
       }
     }
 
-    return Response.json({ conversation: conversation[0] })
+    return NextResponse.json({ conversation: conversation[0] })
   } catch (error) {
     console.error("Error saving conversation:", error)
-    return Response.json({ error: "Failed to save conversation" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to save conversation" }, { status: 500 })
   }
 }
 
@@ -121,7 +126,7 @@ export async function PUT(req: Request) {
     const { conversationId, title } = await req.json()
 
     if (!conversationId || !title) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const result = await sql`
@@ -132,13 +137,13 @@ export async function PUT(req: Request) {
     `
 
     if (result.length === 0) {
-      return Response.json({ error: "Conversation not found" }, { status: 404 })
+      return NextResponse.json({ error: "Conversation not found" }, { status: 404 })
     }
 
-    return Response.json({ conversation: result[0] })
+    return NextResponse.json({ conversation: result[0] })
   } catch (error) {
     console.error("Error updating conversation:", error)
-    return Response.json({ error: "Failed to update conversation" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to update conversation" }, { status: 500 })
   }
 }
 
@@ -148,14 +153,14 @@ export async function DELETE(req: Request) {
     const conversationId = searchParams.get("conversationId")
 
     if (!conversationId) {
-      return Response.json({ error: "Conversation ID is required" }, { status: 400 })
+      return NextResponse.json({ error: "Conversation ID is required" }, { status: 400 })
     }
 
     await sql`DELETE FROM conversations WHERE id = ${conversationId}::integer`
 
-    return Response.json({ success: true })
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting conversation:", error)
-    return Response.json({ error: "Failed to delete conversation" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to delete conversation" }, { status: 500 })
   }
 }
