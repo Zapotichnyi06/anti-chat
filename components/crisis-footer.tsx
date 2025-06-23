@@ -64,7 +64,7 @@ export function CrisisFooter() {
   if (!contact) {
     return (
       <div className="mt-8 text-center">
-        <p className="text-xs text-gray-600">Crisis support: Contact your local emergency services</p>
+        <p className="text-xs text-gray-600">Crisis support: Contact your local emergency services.</p>
       </div>
     )
   }
