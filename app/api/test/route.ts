@@ -1,7 +1,9 @@
-export async function GET() {
-  const groqKey = process.env.GROQ_API_KEY || "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"
+import { NextResponse } from 'next/server';
 
-  return Response.json({
+export async function GET() {
+  const groqKey = process.env.GROQ_API_KEY
+
+  return NextResponse.json({
     status: "API working",
     timestamp: new Date().toISOString(),
     groqKey: groqKey ? `Present (${groqKey.substring(0, 10)}...)` : "Missing",
@@ -11,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST() {
-  return Response.json({
+  return NextResponse.json({
     message: "POST endpoint working",
     groqKey: process.env.GROQ_API_KEY ? "Present" : "Using fallback",
   })
